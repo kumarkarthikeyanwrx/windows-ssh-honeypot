@@ -1,0 +1,244 @@
+Megan, a manager for a major Healthcare Enterprise has requested Patrick, a Help Desk agent to deploy a Windows-based OpenSSH server as a honeypot, simulate SSH activity from a Kali VM, identify the activity in OpenSSH logs including the source IP, and apply mitigation by blocking that IP.
+
+1.	After successfully logging onto KaliVM, open up Command terminal and run the ip a command to register an active Ip address which in this case is 10.0.2.5 
+
+2.	Then do the same thing for Windows. Open up a fresh Terminal session and run the ipconfig command to register an Ip address which in this case is 10.0.2.6. 
+
+3.	To ensure Windows and Kali can commute with each other successfully, 
+
+Download and Install Open SSH
+
+Do a quick google search for Open SSH and run the following commands per the screenshot on Windows PowerShell if not installed already. Hit Start, search Optional Features, choose Add an Optional Feature and install OpenSSH Server. 
+
+Right click on Windows Icon and select Windows PowerShell Admin
+
+Open properties for that specified service in PowerShell as an Administrator. Start it and check the service: Get-Service sshd. If the status stops, run the following commands: Set Service-Name sshd -StartupType Automatic Get-Service sshd. 
+
+Then I opened Event Viewer 
+ 
+Within Event Viewer, I Open Applications and Services Logs and then navigate down to the bottom of the page where I click OpenSSH and see 10 events in the middle window. 
+ 
+I click on one of the logs from the list and as you can see here, it’s showing that it’s listening on port 22. 
+
+I open Windows Defender Firewall with Advanced Security
+
+Next, I click on Inbound Rules and Select New Rule per the screenshot below 
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+It asks me what type of Rule I would like to create and Select Port. Then click Next.
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+It asks me what rule I want to specify it to TCP or UDP. I select TCP and select Specific local Ports: 22. 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+It asks me what action should be taken when a connection matches the specified condition? I select Block the Connection since we want the Windows HoneyPot Server to block the incoming connection coming from Kali. 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I had the rule applied to both the Public and Private Domain
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+For the Name, I wrote Block Kali SSH 22 since the Windows Firewall is blocking any incoming connections coming from Kali Linux. 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Afterwards, I right click on Block SSH Port 22 and select Properties. There, I select Scope
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Here we have the Block Kali SSH 22 Property window.
+ 
+
+
+
+
+
+
+
+From there, I navigated to Scope. Then went to Remote IP Addresses and selected these IP addresses. 
+ 
+
+
+
+
+
+
+
+Next I selected the This IP address or subnet option. Then I entered the Kali IP address 10.0.2.5 in the box below and clicked OK.
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Next, you will see the Kali IP address 10.0.2.5 has successfully been added. I click Apply. 
+ 
+
+
+
+
+
+
+
+Next click OK. 
+ 
+
+
+
+
+
+Next I selected Protocols and Ports and entered 22 in the Local Port section underneath Specified Ports.
+
+ 
+
+
+
+In Windows PowerShell, I setup the Server and enabling as well enabling the Domains to be set to True. 
+ 
+
+
+Finally, I then enter the command ssh labuser01@10.0.2.5 on port 22 and get a Connection Refused. Essentially what happened here is Windows blocked a connection request coming directly from Kali. 
+ 
+
+Good effort. The student provides strong screenshots covering the Kali/Windows setup, OpenSSH installation, sshd service status, Event Viewer, firewall rule creation, and blocking of Kali IP 10.0.2.5. The firewall configuration is clearly documented, including TCP/22 and the remote IP scope.  important technical gaps. The initial successful SSH connection and the required OpenSSH log showing the Kali source IP are not clearly demonstrated. Also, the final command is ssh labuser01@10.0.2.5, which targets the Kali IP instead of the Windows server IP 10.0.2.6; therefore, the final “Connection Refused” does not reliably prove that the Windows firewall blocked the Kali connection. 
+Overall: Good documentation and firewall configuration, but key SSH verification and final mitigation evidence are technically incomplete.
+cyber_security.assessor@fullstackacademy.com , Sep 30 at 8:53pm
+
